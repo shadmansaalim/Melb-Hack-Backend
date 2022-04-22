@@ -33,6 +33,14 @@ async function run() {
             res.json(courses);
         })
 
+        //Get single course by 
+        app.get('/course/:id', async (req, res) => {
+            const id = parseInt(req.params.id);
+            const query = { courseID: id }
+            const course = await coursesCollection.findOne(query);
+            res.json(course);
+        })
+
 
     }
     finally {
