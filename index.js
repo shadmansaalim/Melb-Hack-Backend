@@ -62,6 +62,21 @@ async function run() {
 
         })
 
+        app.post('/user/:email/completed', async (req, res) => {
+            const email = req.params.email;
+            if (email) {
+                const query = { email: email };
+                const user = await usersCollection.findOne(query);
+                const { courses } = user;
+                const data = req.body;
+                const { cID, mID, vID } = data;
+                const course = await courses.find(course => course.courseID == cID);
+                const module = await course.modules.find(module => module.key == mID);
+                const video = await module.videos.find(video => video.key == vID);
+                const completed = video.completed;
+                res.json(completed);
+            }
+        })
 
     }
     finally {
