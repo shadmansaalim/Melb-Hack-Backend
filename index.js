@@ -78,6 +78,23 @@ async function run() {
             }
         })
 
+        app.put('/user/:email/completed', async (req, res) => {
+            const email = req.params.email;
+            if (email) {
+                const query = { email: email };
+                const user = await usersCollection.findOne(query);
+                const data = req.body;
+                const { cID, mID, vID } = data;
+                (user.courses[cID - 1].modules[mID - 1].videos[vID - 1]).completed = true;
+                const updateDoc = {
+                    $set: user
+                };
+                const filter = query;
+                const result = await usersCollection.updateOne(filter, updateDoc);
+                res.json(result);
+            }
+        })
+
     }
     finally {
         //   await client.close();
