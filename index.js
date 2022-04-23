@@ -25,6 +25,7 @@ async function run() {
         const database = client.db("melb-hack");
         const coursesCollection = database.collection("courses");
         const usersCollection = database.collection("users");
+        const announcementsCollection = database.collection("announcements");
 
         //GET COURSES FROM DB
         app.get('/courses', async (req, res) => {
@@ -165,6 +166,12 @@ async function run() {
             })
             const progress = Math.round((watched_video_count / total) * 100);
             res.json(progress);
+        })
+
+        app.get('/announcements', async (req, res) => {
+            const cursor = announcementsCollection.find({});
+            const announcements = await cursor.toArray();
+            res.json(announcements);
         })
 
     }
