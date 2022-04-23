@@ -174,6 +174,11 @@ async function run() {
             res.json(announcements);
         })
 
+        app.post('/announcements', async (req, res) => {
+            const announcement = req.body;
+            const result = await announcementsCollection.insertOne(announcement);
+            res.json(result);
+        })
     }
     finally {
         //   await client.close();
