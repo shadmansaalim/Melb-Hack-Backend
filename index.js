@@ -80,14 +80,19 @@ async function run() {
             if (email) {
                 const query = { email: email };
                 const user = await usersCollection.findOne(query);
-                const { courses } = user;
                 const data = req.body;
                 const { cID, mID, vID } = data;
-                const course = await courses.find(course => course.courseID == cID);
-                const module = await course.modules.find(module => module.key == mID);
-                const video = await module.videos.find(video => video.key == vID);
-                const completed = video.completed;
-                res.json(completed);
+                const course = await user?.courses.find(course => course.courseID == cID);
+                let status = false;
+                const completed = course?.completed;
+                const moduleID = parseInt(completed.substring(0, completed.indexOf('/')));
+                const videoID = parseInt(completed.substring(completed.indexOf("/") + 1));
+
+                if (mID <= moduleID && vID <= videoID) {
+                    status = true;
+                }
+
+                res.json(status);
             }
         })
 
@@ -98,7 +103,7 @@ async function run() {
                 const user = await usersCollection.findOne(query);
                 const data = req.body;
                 const { cID, mID, vID } = data;
-                (user.courses[cID - 1].modules[mID - 1].videos[vID - 1]).completed = true;
+                (user.courses[cID - 1]).completed = `${mID}/${vID}`;
                 const updateDoc = {
                     $set: user
                 };
