@@ -62,6 +62,19 @@ async function run() {
 
         })
 
+        //Checking if user is instructor or not
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isInstructor = false;
+            if (user?.role === 'instructor') {
+                isInstructor = true;
+            }
+            res.json({ instructor: isInstructor });
+        })
+
+
         app.post('/user/:email/completed', async (req, res) => {
             const email = req.params.email;
             if (email) {
@@ -93,6 +106,21 @@ async function run() {
                 const result = await usersCollection.updateOne(filter, updateDoc);
                 res.json(result);
             }
+        })
+
+        app.post('/user/:courseID/new-modules', async (req, res) => {
+            const id = parseInt(req.params.courseID);
+            const module = req.body;
+            const query = { courseID: id };
+            const course = await coursesCollection.findOne(query);
+            const modules = [...course.modules, module]
+            course.modules = modules;
+            const updateDoc = {
+                $set: course
+            };
+            const filter = query;
+            const result = await coursesCollection.updateOne(filter, updateDoc);
+            res.json(result);
         })
 
     }
