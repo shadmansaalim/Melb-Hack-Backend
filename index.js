@@ -88,8 +88,13 @@ async function run() {
                 const moduleID = parseInt(completed.substring(0, completed.indexOf('/')));
                 const videoID = parseInt(completed.substring(completed.indexOf("/") + 1));
 
-                if (mID <= moduleID && vID <= videoID) {
+                if (mID < moduleID) {
                     status = true;
+                }
+                else if (mID == moduleID) {
+                    if (vID <= videoID) {
+                        status = true;
+                    }
                 }
 
                 res.json(status);
