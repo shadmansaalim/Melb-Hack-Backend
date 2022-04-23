@@ -133,6 +133,40 @@ async function run() {
             res.json(result);
         })
 
+
+        //course progress
+        app.get('/users/progress/:email/:courseID', async (req, res) => {
+            const email = req.params.email;
+            const courseID = parseInt(req.params.courseID);
+            const query1 = { email: email };
+            const user = await usersCollection.findOne(query1);
+            const userCourse = user?.courses.find(course => course.courseID == courseID);
+            const completed = userCourse.completed;
+            const moduleNum = parseInt(completed.substring(0, completed.indexOf('/')));
+            const videoNum = parseInt(completed.substring(completed.indexOf("/") + 1));
+            const query2 = { courseID: courseID };
+            const course = await coursesCollection.findOne(query2);
+            let total = 0;
+            let watched_video_count = 0;
+            course?.modules.forEach((module) => {
+                const moduleKey = module.key;
+                module.videos.forEach(video => {
+                    const videoKey = video.key;
+                    total++;
+                    if (moduleKey < moduleNum) {
+                        watched_video_count++;
+                    }
+                    else if (moduleKey == moduleNum) {
+                        if (videoKey <= videoNum) {
+                            watched_video_count++;
+                        }
+                    }
+                })
+            })
+            const progress = Math.round((watched_video_count / total) * 100);
+            res.json(progress);
+        })
+
     }
     finally {
         //   await client.close();
