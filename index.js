@@ -3,7 +3,6 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
-const ObjectId = require('mongodb').ObjectId;
 
 
 const app = express();
@@ -37,7 +36,7 @@ async function run() {
 
         //Get single course by 
         app.get('/course/:id', async (req, res) => {
-            const id = parseInt(req.params.id);
+            const id = parseInt(req?.params?.id);
             const query = { courseID: id }
             const course = await coursesCollection.findOne(query);
             res.json(course);
@@ -45,14 +44,14 @@ async function run() {
 
         //Add users to database those who signed up with Email Password
         app.post('/users', async (req, res) => {
-            const user = req.body;
+            const user = req?.body;
             const result = await usersCollection.insertOne(user);
             res.json(result);
         })
 
         //Add users to database those who signed up with External Provider
         app.put('/users', async (req, res) => {
-            const user = req.body;
+            const user = req?.body;
             const filter = { email: user.email };
             const options = { upsert: true };
             const updateDoc = {
@@ -65,7 +64,7 @@ async function run() {
 
         //Checking if user is instructor or not
         app.get('/users/:email', async (req, res) => {
-            const email = req.params.email;
+            const email = req?.params?.email;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
             let isInstructor = false;
@@ -77,11 +76,11 @@ async function run() {
 
 
         app.post('/user/:email/completed', async (req, res) => {
-            const email = req.params.email;
+            const email = req?.params?.email;
             if (email) {
                 const query = { email: email };
                 const user = await usersCollection.findOne(query);
-                const data = req.body;
+                const data = req?.body;
                 const { cID, mID, vID } = data;
                 const course = await user?.courses.find(course => course.courseID == cID);
                 let status = false;
@@ -103,13 +102,13 @@ async function run() {
         })
 
         app.put('/user/:email/completed', async (req, res) => {
-            const email = req.params.email;
+            const email = req?.params?.email;
             if (email) {
                 const query = { email: email };
                 const user = await usersCollection.findOne(query);
                 const data = req.body;
                 const { cID, mID, vID } = data;
-                (user.courses[cID - 1]).completed = `${mID}/${vID}`;
+                (user.courses[cID - 1])?.completed = `${mID}/${vID}`;
                 const updateDoc = {
                     $set: user
                 };
@@ -120,8 +119,8 @@ async function run() {
         })
 
         app.post('/user/:courseID/new-modules', async (req, res) => {
-            const id = parseInt(req.params.courseID);
-            const module = req.body;
+            const id = parseInt(req?.params?.courseID);
+            const module = req?.body;
             const query = { courseID: id };
             const course = await coursesCollection.findOne(query);
             const modules = [...course.modules, module]
@@ -137,12 +136,12 @@ async function run() {
 
         //course progress
         app.get('/users/progress/:email/:courseID', async (req, res) => {
-            const email = req.params.email;
-            const courseID = parseInt(req.params.courseID);
+            const email = req?.params?.email;
+            const courseID = parseInt(req?.params?.courseID);
             const query1 = { email: email };
             const user = await usersCollection.findOne(query1);
             const userCourse = user?.courses.find(course => course.courseID == courseID);
-            const completed = userCourse.completed;
+            const completed = userCourse?.completed;
             const moduleNum = parseInt(completed.substring(0, completed.indexOf('/')));
             const videoNum = parseInt(completed.substring(completed.indexOf("/") + 1));
             const query2 = { courseID: courseID };
@@ -150,9 +149,9 @@ async function run() {
             let total = 0;
             let watched_video_count = 0;
             course?.modules.forEach((module) => {
-                const moduleKey = module.key;
+                const moduleKey = module?.key;
                 module.videos.forEach(video => {
-                    const videoKey = video.key;
+                    const videoKey = video?.key;
                     total++;
                     if (moduleKey < moduleNum) {
                         watched_video_count++;
