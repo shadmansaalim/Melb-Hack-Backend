@@ -179,6 +179,7 @@ async function run() {
             const result = await announcementsCollection.insertOne(announcement);
             res.json(result);
         })
+
     }
     finally {
         //   await client.close();
