@@ -3,18 +3,14 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
+const ObjectId = require('mongodb').ObjectId;
 
 
 const app = express();
 const port = process.env.PORT || 8000;
 
 // Middleware use for server
-app.use(
-    cors({
-        origin: "https://brevemod.web.app/",
-        credentials: true,
-    })
-);
+app.use(cors());
 app.use(express.json());
 
 
