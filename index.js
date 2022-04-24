@@ -6,16 +6,15 @@ require('dotenv').config()
 
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 // Middleware use for server
-const corsOptions = {
-    origin: '*',
-    credentials: true,            //access-control-allow-credentials:true
-    optionSuccessStatus: 200,
-}
-
-app.use(cors(corsOptions))
+app.use(
+    cors({
+        origin: "https://brevemod.web.app/",
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 
