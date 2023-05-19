@@ -108,7 +108,7 @@ async function run() {
                 const user = await usersCollection.findOne(query);
                 const data = req.body;
                 const { cID, mID, vID } = data;
-                (user.courses[cID - 1])?.completed = `${mID}/${vID}`;
+                user.courses[cID - 1].completed = `${mID}/${vID}`;
                 const updateDoc = {
                     $set: user
                 };
